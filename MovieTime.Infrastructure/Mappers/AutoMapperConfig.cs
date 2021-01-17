@@ -12,6 +12,8 @@ namespace MovieTime.Infrastructure.Mappers
         public static IMapper Initialize() => new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<User, UserDto>();
+            cfg.CreateMap<Movie, MovieDto>();
+            cfg.CreateMap<Favourite, FavouriteDto>();
 
         }).CreateMapper();
     }

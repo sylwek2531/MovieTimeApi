@@ -33,7 +33,12 @@ namespace MovieTime.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IMovieRepository, MovieRepository>();
+            services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMovieService, MovieService>();
+            services.AddScoped<IFavouriteService, FavouriteService>();
 
             //connecttion string db init
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MovieTime"), b => b.MigrationsAssembly("MovieTime.Api")));

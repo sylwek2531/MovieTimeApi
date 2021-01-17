@@ -30,12 +30,6 @@ namespace MovieTime.Infrastructure.Repositories
             var user = _appDbContext.Users.First(c => c.Id == Id);
             return user;
         }
-
-        public IEnumerable<User> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Update(User user)
         {
             _appDbContext.Entry(user).State = EntityState.Modified;
