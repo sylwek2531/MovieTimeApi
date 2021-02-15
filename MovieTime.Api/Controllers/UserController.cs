@@ -21,7 +21,15 @@ namespace MovieTime.Api.Controllers
         [HttpGet("id")]
         public IActionResult Get(Guid Id)
         {
+            if(Id == null || Id == Guid.Empty)
+            {
+                return NotFound("Parameter missing");
+            }
             var user = _userService.Get(Id);
+            if(user == null)
+            {
+                return NotFound();
+            }
             return Ok(user);
         }
         [HttpPost]

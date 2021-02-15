@@ -6,7 +6,7 @@ namespace MovieTime.Core.Domain
 {
     public abstract class Entity
     {
-        public Guid Id { get; protected set; }
+        public Guid ID { get; protected set; }
 
         public DateTime CreateAt { get; protected set; }
 
@@ -14,7 +14,7 @@ namespace MovieTime.Core.Domain
 
         protected Entity()
         {
-            Id = Guid.NewGuid();
+            ID = Guid.NewGuid();
             CreateAt = DateTime.Now;
             UpdateAt = DateTime.Now;
         }

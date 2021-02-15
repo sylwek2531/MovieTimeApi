@@ -27,7 +27,7 @@ namespace MovieTime.Infrastructure.Repositories
 
         public Movie Get(Guid Id)
         {
-            var movie = _appDbContext.Movies.First(c => c.Id == Id);
+            var movie = _appDbContext.Movies.First(c => c.ID == Id);
             return movie;
         }
 

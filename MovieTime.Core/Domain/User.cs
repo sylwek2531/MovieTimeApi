@@ -7,31 +7,33 @@ namespace MovieTime.Core.Domain
 {
     public class User : Entity
     {
-        public string Name { get; protected set;}
+        public string Name { get; protected set; }
 
-        public string Surname { get; protected set;}
+        public string Surname { get; protected set; }
 
-        public string Email { get; protected set;}
+        public string Email { get; protected set; }
 
-        public string Login { get; protected set;}
+        public string Login { get; protected set; }
 
-        public string Password { get; protected set;}
+        public string Password { get; protected set; }
 
-      
+        public virtual ICollection<Favourite> Favourites { get; protected set; }
+
+        public virtual ICollection<Movie> Movies{ get; protected set; }
 
         public User()
         {
 
         }
-        public User(Guid id, string name, string surname, string email, string login, string password )
+        public User(Guid id, string name, string surname, string email, string login, string password)
         {
-            Id = id;
+            ID = id;
             Name = name;
             Surname = surname;
             Email = email;
             Login = login;
             Password = password;
-          
+
         }
 
         public void setName(string name)

@@ -15,27 +15,23 @@ namespace MovieTime.Infrastructure.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Movie> Movies {get; set; }
-
-        public DbSet<Favourite> Favourities {get; set;}
+        public DbSet<Movie> Movies { get; set; }
+        public DbSet<Favourite> Favourities { get; set; }
+        public DbSet<Creator> Creators { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<Rated> Rateds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-                base.OnModelCreating(builder);
-                builder.Entity<User>();
-                builder.Entity<Movie>();
+            base.OnModelCreating(builder);
+            builder.Entity<User>().HasMany(e => e.Movies).WithOne(e=> e.Users).HasForeignKey(e=> e.ID).OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<Movie>().HasOne(e => e.Users).WithMany(e => e.Movies).HasForeignKey(e => e.UserID).OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<Favourite>();
+            builder.Entity<Creator>();
+            builder.Entity<Genre>();
+            builder.Entity<Rated>();
 
-                builder.Entity<Favourite>();
-
-
-            /*                builder.Entity<Favourities>().HasMany<User>(g => (IEnumerable<User>)g.Users);
-            */
-            /*            this.HasRequired(c => c.Owner).WithMany(p => p.Cars).HasForeignKey(c => c.OwnerId);
-            */
         }
-        /* modelBuilder.Entity<Grade>()
-     .HasMany<Student>(g => g.Students)
-     .WithRequired(s => s.CurrentGrade)
-     .HasForeignKey<int>(s => s.CurrentGradeId);*/
+    
     }
 }

@@ -27,7 +27,7 @@ namespace MovieTime.Infrastructure.Repositories
 
         public User Get(Guid Id)
         {
-            var user = _appDbContext.Users.First(c => c.Id == Id);
+            var user = _appDbContext.Users.First(c => c.ID == Id);
             return user;
         }
         public void Update(User user)

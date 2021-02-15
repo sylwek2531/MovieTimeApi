@@ -8,8 +8,9 @@ namespace MovieTime.Core.Domain
     public class Genre : Entity
     {
 
-        public Guid Id_movie { get; protected set; }
+        public Guid MovieID { get; protected set; }
         public string Name { get; protected set; }
+        public virtual Movie Movie { get; set; }
 
         public Genre()
         {
@@ -17,9 +18,9 @@ namespace MovieTime.Core.Domain
         }
         public Genre(Guid id, Guid id_movie, string name)
         {
-            Id = id;
+            ID = id;
             Name = name; 
-            Id_movie = id_movie;
+            MovieID = id_movie;
         }
 
     }

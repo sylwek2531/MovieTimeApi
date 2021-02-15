@@ -27,7 +27,7 @@ namespace MovieTime.Infrastructure.Repositories
 
         public Favourite Get(Guid Id)
         {
-            var favourities = _appDbContext.Favourities.First(c => c.Id == Id);
+            var favourities = _appDbContext.Favourities.First(c => c.ID == Id);
             return favourities;
         }
 
