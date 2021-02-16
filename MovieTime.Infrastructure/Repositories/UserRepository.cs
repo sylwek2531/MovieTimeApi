@@ -32,7 +32,9 @@ namespace MovieTime.Infrastructure.Repositories
         }
         public void Update(User user)
         {
-            _appDbContext.Entry(user).State = EntityState.Modified;
+            /*            _appDbContext.Entry(user).State = EntityState.Modified;
+            */
+            _appDbContext.Users.Update(user);
             _appDbContext.SaveChanges();
        }
         public void Delete(User user)
@@ -40,6 +42,14 @@ namespace MovieTime.Infrastructure.Repositories
             _appDbContext.Remove(user);
             _appDbContext.SaveChanges();
          
+        }
+        public User ValidateUser(string login)
+        {
+            return _appDbContext.Users.SingleOrDefault(x => x.Login == login);
+        }
+        public bool ValidateUserIfExistByLogin(string login)
+        {
+            return _appDbContext.Users.Any(x => x.Login == login);
         }
     }
 }

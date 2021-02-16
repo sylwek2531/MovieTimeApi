@@ -7,15 +7,24 @@ namespace MovieTime.Core.Domain
 {
     public class User : Entity
     {
+        [Required]
         public string Name { get; protected set; }
 
+        [Required]
         public string Surname { get; protected set; }
 
+        [Required(ErrorMessage = "The email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; protected set; }
 
+        [Required]
         public string Login { get; protected set; }
 
+        [Required]
         public string Password { get; protected set; }
+
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
 
         public virtual ICollection<Favourite> Favourites { get; protected set; }
 
@@ -25,7 +34,7 @@ namespace MovieTime.Core.Domain
         {
 
         }
-        public User(Guid id, string name, string surname, string email, string login, string password)
+        public User(Guid id, string name, string surname, string email, string login, string password, byte[] passwordHash, byte[] passwordSalt)
         {
             ID = id;
             Name = name;
@@ -33,6 +42,8 @@ namespace MovieTime.Core.Domain
             Email = email;
             Login = login;
             Password = password;
+            PasswordHash = passwordHash;
+            PasswordSalt = passwordSalt;
 
         }
 

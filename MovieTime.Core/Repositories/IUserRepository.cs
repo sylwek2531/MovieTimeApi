@@ -11,5 +11,8 @@ namespace MovieTime.Core.Repositories
         User Add(User user);
         void Update(User user);
         void Delete(User user);
+        User ValidateUser(string login);
+        bool ValidateUserIfExistByLogin(string login);
+
     }
 }

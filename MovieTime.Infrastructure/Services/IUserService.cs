@@ -12,6 +12,7 @@ namespace MovieTime.Infrastructure.Services
         UserDto Create(Guid Id, string name, string surname, string email, string login, string password);
         void Update(Guid Id, string name, string surname, string email, string login, string password);
         void Delete(Guid Id);
+        UserDto Authenticate(string login, string password);
 
     }
 }

@@ -4,10 +4,8 @@ using System.Text;
 
 namespace MovieTime.Infrastructure.DTO
 {
-    public class UserDto
+    public class RegistereDto
     {
-        public string ID { get; set; }
-
         public string Name { get; set; }
 
         public string Surname { get; set; }
@@ -17,6 +15,5 @@ namespace MovieTime.Infrastructure.DTO
         public string Login { get; set; }
 
         public string Password { get; set; }
-
     }
 }
