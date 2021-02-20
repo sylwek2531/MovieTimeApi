@@ -12,6 +12,8 @@ namespace MovieTime.Core.Domain
         public string Title { get; protected set; }
         public string Description { get; protected set; }
         public int Rate { get; protected set; }
+        public int Year { get; protected set; }
+
         public virtual User Users { get; set; }
 
         public virtual ICollection<Favourite> Favourites { get; set; }
@@ -22,25 +24,54 @@ namespace MovieTime.Core.Domain
         {
 
         }
-        public Movie(Guid id, Guid id_user, string title, string description, int rate)
+        public Movie(Guid id, Guid id_user, string title, string description, int rate, int year)
         {
             ID = id;
             UserID= id_user;
             Title = title;
             Description = description;
             Rate = rate;
-          
+            Year = year;
+
         }
         public void setTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
             {
-                throw new Exception($"Movie can not have an empty Title");
+                throw new ApplicationException($"Movie can not have an empty Description");
             }
             Title = title;
 
             UpdateAt = DateTime.Now;
         }
+        public void setRate(int rate)
+        {
+            if (string.IsNullOrWhiteSpace(rate.ToString()))
+            {
+                throw new ApplicationException($"Movie can not have an empty Title");
+            }
+            Rate = Rate;
 
+            UpdateAt = DateTime.Now;
+        }
+        public void setDescription(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                throw new ApplicationException($"Movie can not have an empty Title");
+            }
+            Description = description;
+
+            UpdateAt = DateTime.Now;
+        }
+        public void setYear(int year)
+        {
+            if (string.IsNullOrWhiteSpace(year.ToString()))
+            {
+                throw new ApplicationException($"Movie can not have an empty year");
+            }
+            Year = year;
+            UpdateAt = DateTime.Now;
+        }
     }
 }

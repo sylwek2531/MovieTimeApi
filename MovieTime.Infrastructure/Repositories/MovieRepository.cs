@@ -18,6 +18,11 @@ namespace MovieTime.Infrastructure.Repositories
         {
             _appDbContext = appDbContext;
         }
+        public IEnumerable<Movie> GetAll()
+        {
+            IEnumerable<Movie> movies =_appDbContext.Movies.ToList();
+            return movies;
+        }
         public Movie Add(Movie movie)
         {
             _appDbContext.Add(movie);
@@ -25,20 +30,15 @@ namespace MovieTime.Infrastructure.Repositories
             return movie;
         }
 
-        public Movie Get(Guid Id)
+        public Movie Get(Guid ID)
         {
-            var movie = _appDbContext.Movies.First(c => c.ID == Id);
+            var movie = _appDbContext.Movies.First(c => c.ID == ID);
             return movie;
-        }
-
-        public IEnumerable<User> GetAll()
-        {
-            throw new NotImplementedException();
         }
 
         public void Update(Movie movie)
         {
-            _appDbContext.Entry(movie).State = EntityState.Modified;
+            _appDbContext.Movies.Update(movie);
             _appDbContext.SaveChanges();
        }
         public void Delete(Movie movie)
@@ -47,5 +47,17 @@ namespace MovieTime.Infrastructure.Repositories
             _appDbContext.SaveChanges();
          
         }
+      
+        public bool CheckMovieIfExistById(Guid ID)
+        {
+            return _appDbContext.Movies.Any(x => x.ID == ID);
+        }
+        public void updateRateMovie(Guid MovieID, int rateValue)
+        {
+            Movie movie = Get(MovieID);
+            movie.setRate(rateValue);
+            Update(movie);
+        }
+
     }
 }

@@ -7,9 +7,11 @@ namespace MovieTime.Core.Repositories
 {
     public interface IFavouriteRepository
     {
-        Favourite Get(Guid Id);
-        Favourite Add(Favourite movie);
-        void Update(Favourite movie);
-        void Delete(Favourite movie);
+        Favourite Get(Guid ID);
+        Favourite Add(Favourite favourite);
+        void Delete(Favourite favourite);
+        IEnumerable<Favourite> GetAllByUserId(Guid ID);
+        bool checkIfExistByData(Guid UserID, Guid MovieID);
+        Favourite geByData(Guid UserID, Guid MovieID);
     }
 }

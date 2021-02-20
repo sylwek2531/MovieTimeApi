@@ -25,6 +25,13 @@ namespace MovieTime.Core.Domain
             MovieID = id_movie;
             Value = value;
         }
+        public void setValue(int value)
+        {
+        
+            Value = value;
+
+            UpdateAt = DateTime.Now;
+        }
 
     }
 }

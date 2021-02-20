@@ -11,41 +11,60 @@ namespace MovieTime.Infrastructure.Services
     public class FavouriteService : IFavouriteService
     {
         public readonly IFavouriteRepository _favouriteRepository;
+        public readonly IUserRepository _userRepository;
+        public readonly IMovieRepository _movieRepository;
         private readonly IMapper _mapper;
-        public FavouriteService(IFavouriteRepository favouriteRepository, IMapper mapper)
+        public FavouriteService(IFavouriteRepository favouriteRepository, IUserRepository userRepository,IMovieRepository movieRepository, IMapper mapper)
         {
             _favouriteRepository = favouriteRepository;
+            _userRepository = userRepository;
+            _movieRepository = movieRepository;
             _mapper = mapper;
         }
-        public FavouriteDto Create(Guid Id, Guid Id_user, Guid Id_movie)
+        public FavouriteDto Create(Guid ID, Guid UserID, Guid MovieID)
         {
-            var favourite = new Favourite(Id, Id_user, Id_movie);
+            if (!_userRepository.ValidateUserIfExistById(UserID))
+            {
+                throw new ApplicationException("User not exist");
+            }
+            if (!_movieRepository.CheckMovieIfExistById(MovieID))
+            {
+                throw new ApplicationException("Movie not exist");
+            }
+            if (_favouriteRepository.checkIfExistByData(UserID, MovieID))
+            {
+                /* var getExist = _favouriteRepository.geByData(Id_user, Id_movie);
+                 return Delete(getExist.ID);*/
+                throw new ApplicationException("Favourite movie exist");
+            }
+
+            var favourite = new Favourite(ID, UserID, MovieID);
             _favouriteRepository.Add(favourite);
             return _mapper.Map<FavouriteDto>(favourite);
         }
      
-        public void Delete(Guid Id)
+        public void Delete(Guid ID)
         {
-            var favourite = _favouriteRepository.Get(Id);
+            var favourite = _favouriteRepository.Get(ID);
+            if(favourite != null)
+            {
             _favouriteRepository.Delete(favourite);
+            }
         }
-
-        public FavouriteDto Get(Guid Id)
+        public IEnumerable<FavouriteDto> GetAllByUserId(Guid UserID)
         {
-            var favourite = _favouriteRepository.Get(Id);
+            if (!_userRepository.ValidateUserIfExistById(UserID))
+            {
+                throw new ApplicationException("User not exist");
+
+            }
+            var favourities = _favouriteRepository.GetAllByUserId(UserID);
+            return _mapper.Map<IEnumerable<FavouriteDto>>(favourities);
+        }
+        public FavouriteDto Get(Guid ID)
+        {
+            var favourite = _favouriteRepository.Get(ID);
             return _mapper.Map<FavouriteDto>(favourite);
-        }
-
-        public IEnumerable<FavouriteDto> GetAll(Guid Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Guid Id, Guid Id_user, Guid Id_movie)
-        {
-            var favourite = _favouriteRepository.Get(Id);
-
-            _favouriteRepository.Update(favourite);
         }
 
 

@@ -7,12 +7,13 @@ namespace MovieTime.Core.Repositories
 {
     public interface IUserRepository
     {
-        User Get(Guid Id);
+        User Get(Guid ID);
         User Add(User user);
         void Update(User user);
         void Delete(User user);
         User ValidateUser(string login);
         bool ValidateUserIfExistByLogin(string login);
+        bool ValidateUserIfExistById(Guid ID);
 
     }
 }

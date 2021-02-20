@@ -8,11 +8,11 @@ namespace MovieTime.Infrastructure.Services
 {
    public interface IMovieService
     {
-        MovieDto Get(Guid Id);
-        MovieDto Create(Guid Id, Guid Id_user, string Title, string Description, int Rate);
-        void Update(Guid Id, Guid Id_user, string Title, string Description, int Rate);
-        void Delete(Guid Id);
-/*        IEnumerable<MovieDto> GetAll(Guid Id);
-*/
+        MovieDto Get(Guid ID);
+        MovieDto Create(Guid ID, Guid UserID, string Title, string Description, int Year);
+        void Update(Guid ID, string Title, string Description, int Year);
+        void Delete(Guid ID);
+        IEnumerable<MovieDto> GetAll();
+
     }
 }

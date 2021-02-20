@@ -12,12 +12,14 @@ namespace MovieTime.Infrastructure.Services
     {
         public readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+
         public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
         }
-        public UserDto Create(Guid id, string name, string surname, string email, string login, string password)
+
+        public UserDto Create(Guid ID, string name, string surname, string email, string login, string password)
         {
 
             if (string.IsNullOrWhiteSpace(password))
@@ -29,26 +31,40 @@ namespace MovieTime.Infrastructure.Services
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-            var user = new User(id, name, surname, email, login, password, passwordHash, passwordSalt);
+            var user = new User(ID, name, surname, email, login, password, passwordHash, passwordSalt);
           
             _userRepository.Add(user);
             return _mapper.Map<UserDto>(user);
         }
 
-        public void Delete(Guid Id)
+        public void Delete(Guid ID)
         {
-            var user = _userRepository.Get(Id);
-            _userRepository.Delete(user);
+            var user = _userRepository.Get(ID);
+            if (user != null)
+            {
+                _userRepository.Delete(user);
+
+            }
+            else
+            {
+                throw new ApplicationException("User not exist");
+            }
+
         }
 
-        public UserDto Get(Guid Id)
+        public UserDto Get(Guid ID)
         {
-            var user = _userRepository.Get(Id);
+            var user = _userRepository.Get(ID);
+            if(user == null)
+            {
+                throw new ApplicationException("User not exist");
+            }
+
             return _mapper.Map<UserDto>(user);
         }
-        public void Update(Guid id, string name, string surname, string email, string login, string password)
+        public void Update(Guid ID, string name, string surname, string email, string login, string password)
         {
-            var user = _userRepository.Get(id);
+            var user = _userRepository.Get(ID);
             if (user == null)
             {
                 throw new ApplicationException("User not found");
@@ -56,6 +72,23 @@ namespace MovieTime.Infrastructure.Services
 
             user.setName(name);
             user.setSurname(surname);
+
+            if (!string.IsNullOrWhiteSpace(login)){
+                var existUserWithLogin =_userRepository.ValidateUser(login);
+                if (existUserWithLogin != null)
+                {
+                    if(existUserWithLogin.ID != ID)
+                    {
+                        throw new ApplicationException("Login \"" + login + "\" is already taken");
+                    }
+                }
+                else
+                {
+                    user.setLogin(login);
+                }
+            }
+
+
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))
@@ -66,10 +99,9 @@ namespace MovieTime.Infrastructure.Services
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
             }
-
-          
        
             _userRepository.Update(user);
+
         }
         public UserDto Authenticate(string login, string password)
         {

@@ -7,9 +7,12 @@ namespace MovieTime.Core.Repositories
 {
     public interface IMovieRepository
     {
-        Movie Get(Guid Id);
+        Movie Get(Guid ID);
         Movie Add(Movie movie);
         void Update(Movie movie);
         void Delete(Movie movie);
+        IEnumerable<Movie> GetAll();
+        bool CheckMovieIfExistById(Guid ID);
+        void updateRateMovie(Guid MovieID, int rateValue);
     }
 }

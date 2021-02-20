@@ -25,15 +25,13 @@ namespace MovieTime.Infrastructure.Repositories
             return user;
         }
 
-        public User Get(Guid Id)
+        public User Get(Guid ID)
         {
-            var user = _appDbContext.Users.First(c => c.ID == Id);
+            var user = _appDbContext.Users.First(c => c.ID == ID);
             return user;
         }
         public void Update(User user)
         {
-            /*            _appDbContext.Entry(user).State = EntityState.Modified;
-            */
             _appDbContext.Users.Update(user);
             _appDbContext.SaveChanges();
        }
@@ -50,6 +48,10 @@ namespace MovieTime.Infrastructure.Repositories
         public bool ValidateUserIfExistByLogin(string login)
         {
             return _appDbContext.Users.Any(x => x.Login == login);
+        }
+        public bool ValidateUserIfExistById(Guid ID)
+        {
+            return _appDbContext.Users.Any(x => x.ID == ID);
         }
     }
 }

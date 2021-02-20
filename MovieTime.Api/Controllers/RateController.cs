@@ -12,22 +12,22 @@ namespace MovieTime.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FavouriteController : ControllerBase
+    public class RateController : ControllerBase
     {
-        private readonly IFavouriteService _favouriteService;
-        public FavouriteController(IFavouriteService favouriteService)
+        private readonly IRateService _rateService;
+        public RateController(IRateService rateService)
         {
-            _favouriteService = favouriteService;
+            _rateService = rateService;
         }
 
         [Authorize]
         [HttpGet("user_id")]
-        public IActionResult GetAllFavouritesIdsByUserId(Guid UserID)
+        public IActionResult GetAllGradesIdsByUserId(Guid UserID)
         {
             try
             {
-                IEnumerable<FavouriteDto> favourites = _favouriteService.GetAllByUserId(UserID);
-                return Ok(favourites);
+                IEnumerable<RateDto> rate = _rateService.GetAllByUserId(UserID);
+                return Ok(rate);
             }catch(ApplicationException ex)
             {
                 return BadRequest(new { message = ex.Message });
@@ -38,19 +38,19 @@ namespace MovieTime.Api.Controllers
         [HttpGet("id")]
         public IActionResult Get(Guid ID)
         {
-            var favourite = _favouriteService.Get(ID);
-            return Ok(favourite);
+            var rate = _rateService.Get(ID);
+            return Ok(rate);
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Post([FromBody] FavouriteDto favourite)
+        public IActionResult Post([FromBody] RateDto rate)
         {
             try
             {
                 var newId = Guid.NewGuid();
-                var favourites = _favouriteService.Create(newId, favourite.UserID, favourite.MovieID);
-                return Created($"api/favourites/{newId}", favourites);
+                var rates = _rateService.Create(newId, rate.UserID, rate.MovieID, rate.Value);
+                return Created($"api/rate/{newId}", rates);
             }
             catch (ApplicationException ex)
             {
@@ -62,9 +62,24 @@ namespace MovieTime.Api.Controllers
         [HttpDelete("id")]
         public IActionResult Delete(Guid ID)
         {
-            _favouriteService.Delete(ID);
+            _rateService.Delete(ID);
             return NoContent();
 
+        }
+        [Authorize]
+        [HttpPut("id")]
+        public IActionResult Put(Guid ID, [FromBody] RateDto rate)
+        {
+            try
+            {
+
+                _rateService.Update(ID, rate.UserID, rate.MovieID, rate.Value);
+                return NoContent();
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

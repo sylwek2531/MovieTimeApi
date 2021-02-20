@@ -25,23 +25,32 @@ namespace MovieTime.Infrastructure.Repositories
             return favourities;
         }
 
-        public Favourite Get(Guid Id)
+        public Favourite Get(Guid ID)
         {
-            var favourities = _appDbContext.Favourities.First(c => c.ID == Id);
+            var favourities = _appDbContext.Favourities.First(c => c.ID == ID);
             return favourities;
         }
 
-       
-        public void Update(Favourite favourities)
-        {
-            _appDbContext.Entry(favourities).State = EntityState.Modified;
-            _appDbContext.SaveChanges();
-       }
         public void Delete(Favourite favourities)
         {
             _appDbContext.Remove(favourities);
             _appDbContext.SaveChanges();
          
+        }
+        public IEnumerable<Favourite> GetAllByUserId(Guid ID)
+        {
+            var favourities = _appDbContext.Favourities.Where(f => f.UserID == ID);
+            return favourities;
+        }
+        public bool checkIfExistByData(Guid UserID, Guid MovieID)
+        {
+            var exist = _appDbContext.Favourities.Any(x => x.UserID == UserID && x.MovieID == MovieID);
+            return exist;
+        }
+        public Favourite geByData(Guid UserID, Guid MovieID)
+        {
+            var favourite = _appDbContext.Favourities.First(c => c.UserID == UserID && c.MovieID == MovieID);
+            return favourite;
         }
     }
 }

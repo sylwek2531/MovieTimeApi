@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MovieTime.Core.Domain
 {
-    public class User : Entity
+    public class User : Entity, IValidatableObject
     {
         [Required]
         public string Name { get; protected set; }
@@ -14,7 +14,6 @@ namespace MovieTime.Core.Domain
         public string Surname { get; protected set; }
 
         [Required(ErrorMessage = "The email address is required")]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; protected set; }
 
         [Required]
@@ -61,7 +60,7 @@ namespace MovieTime.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(surname))
             {
-                throw new Exception($"User can not have an empty surname");
+                throw new ApplicationException($"User can not have an empty surname");
             }
             Surname = surname;
 
@@ -96,6 +95,11 @@ namespace MovieTime.Core.Domain
             Password = password;
 
             UpdateAt = DateTime.Now;
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            throw new NotImplementedException();
         }
     }
 }

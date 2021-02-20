@@ -15,7 +15,6 @@ using MovieTime.Infrastructure.Services;
 
 namespace MovieTime.Api.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -55,20 +54,19 @@ namespace MovieTime.Api.Controllers
             return Ok(
                 new
                 {
-                    Login = user.Login,
-                    Email = user.Email,
+                    User = user,
                     Token = tokenString
                 });
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegistereDto model)
+        public IActionResult Register([FromBody] RegistereDto register)
         {
             try
             {
                 var newId = Guid.NewGuid();
-                var user = _userService.Create(newId, model.Name, model.Surname, model.Email, model.Login, model.Password);
+                var user = _userService.Create(newId, register.Name, register.Surname, register.Email, register.Login, register.Password);
                 return Created($"api/users/{newId}", user);
 
             }
@@ -78,20 +76,51 @@ namespace MovieTime.Api.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("id")]
-        public IActionResult Put(Guid Id, [FromBody] UserDto user)
+        public IActionResult Put(Guid ID, [FromBody] UserUpdateDto update)
         {
-            _userService.Update(Id, user.Name, user.Surname, user.Email, user.Login, user.Password);
+            try
+            {
+                _userService.Update(ID, update.Name, update.Surname, update.Email, update.Login, update.Password);
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
+        [Authorize]
         [HttpDelete("id")]
-        public IActionResult Delete(Guid Id)
+        public IActionResult Delete(Guid ID)
         {
-            _userService.Delete(Id);
-            return NoContent();
+            try
+            {
+                _userService.Delete(ID);
+                return NoContent();
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
 
         }
 
+        [Authorize]
+        [HttpGet("id")]
+        public IActionResult Get(Guid ID)
+        {
+            try
+            {
+                var movie = _userService.Get(ID);
+                return Ok(movie);
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

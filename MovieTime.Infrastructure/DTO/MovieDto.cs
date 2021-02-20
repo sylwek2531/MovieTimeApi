@@ -6,16 +6,15 @@ namespace MovieTime.Infrastructure.DTO
 {
     public class MovieDto
     {
-        public Guid Id { get; set; }
+        public Guid ID { get; set; }
 
-        public Guid Id_user { get; set; }
+        public Guid UserID { get; set; }
 
         public string Title { get; set; }
 
         public string Description { get; set; }
 
-        public int Rate { get; set; }
-
+        public int Year { get; set; }
 
     }
 }

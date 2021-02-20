@@ -14,6 +14,7 @@ namespace MovieTime.Infrastructure.Mappers
             cfg.CreateMap<User, UserDto>();
             cfg.CreateMap<Movie, MovieDto>();
             cfg.CreateMap<Favourite, FavouriteDto>();
+            cfg.CreateMap<Rated, RateDto>();
 
         }).CreateMapper();
     }

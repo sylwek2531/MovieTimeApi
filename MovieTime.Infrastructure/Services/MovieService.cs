@@ -11,46 +11,73 @@ namespace MovieTime.Infrastructure.Services
     public class MovieService : IMovieService
     {
         public readonly IMovieRepository _movieRepository;
+        public readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public MovieService(IMovieRepository movieRepository, IMapper mapper)
+        public MovieService(IMovieRepository movieRepository, IUserRepository userRepository, IMapper mapper)
         {
             _movieRepository = movieRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
-        public MovieDto Create(Guid id, Guid id_user, string title, string description, int rate)
+        public IEnumerable<MovieDto> GetAll()
         {
-            var movie = new Movie(id, id_user, title, description, rate);
-            Console.WriteLine(movie);
+            var movies = _movieRepository.GetAll();
+            return _mapper.Map<IEnumerable<MovieDto>>(movies);
+        }
+
+        public void Delete(Guid ID)
+        {
+
+            var movie = _movieRepository.Get(ID);
+            if (movie != null)
+            {
+                _movieRepository.Delete(movie);
+            }
+        }
+
+        public MovieDto Get(Guid ID)
+        {
+            var movie = _movieRepository.Get(ID);
+            if (movie == null)
+            {
+                throw new ApplicationException("Movie not exist");
+
+            }
+            return _mapper.Map<MovieDto>(movie);
+        }
+
+
+        public MovieDto Create(Guid ID, Guid UserID, string title, string description, int year)
+        {
+            if (UserID.ToString().Length > 0)
+            {
+                if (!_userRepository.ValidateUserIfExistById(UserID))
+                {
+                    throw new ApplicationException("User not exist");
+                }
+            }
+            else
+            {
+                UserID = Guid.Empty;
+            }
+            var movie = new Movie(ID, UserID, title, description,0, year);
+
             _movieRepository.Add(movie);
             return _mapper.Map<MovieDto>(movie);
         }
-     
-        public void Delete(Guid Id)
-        {
-            var movie = _movieRepository.Get(Id);
-            _movieRepository.Delete(movie);
-        }
 
-        public MovieDto Get(Guid Id)
+        public void Update(Guid ID, string Title, string Description, int Year)
         {
-            var movie = _movieRepository.Get(Id);
-            return _mapper.Map<MovieDto>(movie);
-        }
+            var movie = _movieRepository.Get(ID);
+            if (movie == null)
+            {
+                throw new ApplicationException("Movie not found");
+            }
 
-        public IEnumerable<MovieDto> GetAll(Guid Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Guid Id, Guid Id_user, string Title, string Description, int Rate)
-        {
-            var movie = _movieRepository.Get(Id);
             movie.setTitle(Title);
-          /*  movie.Id = Id;
-            movie.Id_user = Id_user;
-            movie.Title = Title;
-            movie.Description = Description;
-            movie.Rate = Rate;*/
+            movie.setDescription(Description);
+            movie.setYear(Year);
+
 
             _movieRepository.Update(movie);
         }
