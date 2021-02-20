@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MovieTime.Infrastructure.DTO
 {
-    public class MovieDto
+    public class MovieCreateDto
     {
         public Guid ID { get; set; }
 
@@ -14,16 +14,13 @@ namespace MovieTime.Infrastructure.DTO
 
         public string Description { get; set; }
 
-        public int Rate { get; protected set; }
-
         public int Year { get; set; }
 
         //
-        public ICollection<RateDto> Rateds { get; set; }
 
-        public ICollection<CreatorDto> Creators{ get; set; }
+        public IEnumerable<string> Creator{ get; set; }
 
-        public ICollection<GenreDto> Genres { get; set; }
+        public IEnumerable<string> Genre { get; set; }
 
 
     }

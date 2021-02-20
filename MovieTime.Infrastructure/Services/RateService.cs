@@ -41,6 +41,7 @@ namespace MovieTime.Infrastructure.Services
 
             var rate = new Rated(ID, UserID, MovieID, Value);
             _rateRepository.Add(rate);
+            updateRateMovie(MovieID);
             return _mapper.Map<RateDto>(rate);
         }
      

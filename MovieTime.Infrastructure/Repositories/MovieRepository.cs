@@ -19,7 +19,17 @@ namespace MovieTime.Infrastructure.Repositories
             _appDbContext = appDbContext;
         }
         public IEnumerable<Movie> GetAll()
-        {
+        {/*
+            persons.LeftJoin(
+    phoneNumbers,
+    person => person.Id,
+    phoneNumber => phoneNumber.PersonId,
+    (person, phoneNumber) => new
+    {
+        Person = person,
+        PhoneNumber = phoneNumber?.Number
+    }
+);*/
             IEnumerable<Movie> movies =_appDbContext.Movies.ToList();
             return movies;
         }

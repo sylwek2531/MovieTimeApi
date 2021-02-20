@@ -24,6 +24,23 @@ namespace MovieTime.Core.Domain
             Name = name;
             MovieID = id_movie;
         }
+        public void setName(string name)
+        {
 
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ApplicationException($"Movie crtaor not have an empty name");
+            }
+            Name = name;
+
+            UpdateAt = DateTime.Now;
+        }
+        public void setMovieID(Guid movieID)
+        {
+
+            MovieID = movieID;
+
+            UpdateAt = DateTime.Now;
+        }
     }
 }

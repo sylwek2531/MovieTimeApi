@@ -59,12 +59,12 @@ namespace MovieTime.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Post([FromBody] MovieDto movie)
+        public IActionResult Post([FromBody] MovieCreateDto movie)
         {
             try
             {
                 var newId = Guid.NewGuid();
-                movie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year);
+                movie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creator, movie.Genre);
                 return Created($"api/movies/{newId}", movie);
             }
             catch (ApplicationException ex)
@@ -75,12 +75,11 @@ namespace MovieTime.Api.Controllers
 
         [Authorize]
         [HttpPut("id")]
-        public IActionResult Put(Guid ID, [FromBody] MovieDto movie)
+        public IActionResult Put(Guid ID, [FromBody] MovieCreateDto movie)
         {
             try
             {
-
-                _movieService.Update(ID, movie.Title, movie.Description, movie.Year);
+                _movieService.Update(ID, movie.Title, movie.Description, movie.Year, movie.Creator, movie.Genre);
                 return NoContent();
             }
             catch (ApplicationException ex)
@@ -98,7 +97,7 @@ namespace MovieTime.Api.Controllers
 
         }
 
-        public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
+      /*  public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
         {
             long size = files.Sum(f => f.Length);
 
@@ -106,8 +105,8 @@ namespace MovieTime.Api.Controllers
             {
                 if (formFile.Length > 0)
                 {
-/*                    var filePath = Path.GetTempFileName();
-*/                    var filePath = Path.Combine(Configuration.GetSection("StoredFilesPath").Value,
+*//*                    var filePath = Path.GetTempFileName();
+*//*                    var filePath = Path.Combine(Configuration.GetSection("StoredFilesPath").Value,
           Path.GetRandomFileName());
 
                     using (var stream = System.IO.File.Create(filePath))
@@ -121,6 +120,6 @@ namespace MovieTime.Api.Controllers
             // Don't rely on or trust the FileName property without validation.
 
             return Ok(new { count = files.Count, size });
-        }
+        }*/
     }
 }

@@ -19,6 +19,7 @@ namespace MovieTime.Core.Domain
         public virtual ICollection<Favourite> Favourites { get; set; }
         public virtual ICollection<Rated> Rateds { get; set; }
         public virtual ICollection<Creator> Creators { get; set; }
+        public virtual ICollection<Genre> Genres{ get; set; }
 
         public Movie()
         {

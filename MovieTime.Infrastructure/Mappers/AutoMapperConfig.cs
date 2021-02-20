@@ -13,6 +13,9 @@ namespace MovieTime.Infrastructure.Mappers
         {
             cfg.CreateMap<User, UserDto>();
             cfg.CreateMap<Movie, MovieDto>();
+            cfg.CreateMap<Movie, MovieCreateDto>();
+            cfg.CreateMap<Genre, GenreDto>();
+            cfg.CreateMap<Creator, CreatorDto>();
             cfg.CreateMap<Favourite, FavouriteDto>();
             cfg.CreateMap<Rated, RateDto>();
 
