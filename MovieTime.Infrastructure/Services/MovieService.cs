@@ -34,21 +34,21 @@ namespace MovieTime.Infrastructure.Services
         public void Delete(Guid ID)
         {
 
-            var movie = _movieRepository.Get(ID);
-            if (movie != null)
+            if (_movieRepository.CheckMovieIfExistById(ID))
             {
+                var movie = _movieRepository.Get(ID);
                 _movieRepository.Delete(movie);
             }
         }
 
         public MovieDto Get(Guid ID)
         {
-            var movie = _movieRepository.Get(ID);
-            if (movie == null)
+            if (!_movieRepository.CheckMovieIfExistById(ID))
             {
                 throw new ApplicationException("Movie not exist");
 
             }
+            var movie = _movieRepository.Get(ID);
             return _mapper.Map<MovieDto>(movie);
         }
 
@@ -102,77 +102,64 @@ namespace MovieTime.Infrastructure.Services
             movie.setDescription(Description);
             movie.setYear(Year);
 
-            if (genres.Count() > 0)
+            //////////
+            ////////// GENRES
+            //////////
+            var getGenres = _genreRepository.GetAllByMovieId(ID).ToList();
+            List<string> getNames = getGenres.Select(x => x.Name).ToList();
+            List<string> genresList = genres.ToList();
+
+
+            List<string> listGenres1 = getNames.Except(genresList).ToList();
+            List<string> listGenres2 = genresList.Except(getNames).ToList();
+            listGenres1.AddRange(listGenres2);
+
+            foreach (var genre in listGenres1)
             {
-
-                var getGenres = _genreRepository.GetAllByMovieId(ID).ToList();
-                var getNames = getGenres.Select(x => x.Name).ToArray();
-
-                var newElements = getNames.Except(genres.ToArray());
-
-                foreach (var genre in newElements)
+                if (getNames.Contains(genre))
                 {
-                    if (!getNames.Contains(genre))
-                    {
-                        _genreRepository.DeleteByName(genre, movie.ID);
-                    }
-                    else
-                    {
-                        var genreItem = new Genre();
-                        genreItem.setMovieID(movie.ID);
-                        genreItem.setName(genre);
-                        _genreRepository.Add(genreItem);
-                    }
+                    _genreRepository.DeleteByName(genre, movie.ID);
                 }
-
-            }
-
-
-
-            if (creators.Count() > 0)
-            {
-                //get data from db
-                var getCreators = _creatorRepository.GetAllByMovieId(ID).ToList();
-
-                //create lis of string
-                var getNamesCreatorsName = getCreators.Select(x => x.Name).ToList();
-
-                //create list of string from data
-                var creatorList = creators.ToList();
-
-
-
-                List<string> getNamesCreators = getNamesCreatorsName.ToList();
-                getNamesCreators.AddRange(creators.ToList());
-
-                getNamesCreators.Distinct().ToList();
-               // getNamesCreators.RemoveAll(item => creators.Contains(item));
-
-
-
-                foreach (var creator in getNamesCreators)
+                else
                 {
-                    if (getNamesCreatorsName.Contains(creator))
-                    {
-                        _creatorRepository.DeleteByName(creator, movie.ID);
-                    }
-                    else
-                    {
-                        var creatorItem = new Creator();
-                        creatorItem.setMovieID(movie.ID);
-                        creatorItem.setName(creator);
-                        _creatorRepository.Add(creatorItem);
-                    }
+                    var genreItem = new Genre();
+                    genreItem.setMovieID(movie.ID);
+                    genreItem.setName(genre);
+                    _genreRepository.Add(genreItem);
                 }
             }
-            else
+
+
+            //////////
+            ////////// CREATORS
+            //////////
+            //get data from db
+            var getCreators = _creatorRepository.GetAllByMovieId(ID).ToList();
+
+            //create lis of string
+            List<string> getNamesCreatorsName = getCreators.Select(x => x.Name).ToList();
+
+            //create list of string from data
+            List<string> creatorList = creators.ToList();
+
+
+            List<string> list1 = getNamesCreatorsName.Except(creatorList).ToList();
+            List<string> list2 = creatorList.Except(getNamesCreatorsName).ToList();
+            list1.AddRange(list2);
+
+
+            foreach (var creator in list1)
             {
-                List<Creator> getAllCreators = _creatorRepository.GetAllByMovieId(ID).ToList();
-
-                foreach (Creator creator in getAllCreators)
+                if (getNamesCreatorsName.Contains(creator))
                 {
-                    _creatorRepository.Delete(creator);
-
+                    _creatorRepository.DeleteByName(creator, movie.ID);
+                }
+                else
+                {
+                    var creatorItem = new Creator();
+                    creatorItem.setMovieID(movie.ID);
+                    creatorItem.setName(creator);
+                    _creatorRepository.Add(creatorItem);
                 }
             }
 

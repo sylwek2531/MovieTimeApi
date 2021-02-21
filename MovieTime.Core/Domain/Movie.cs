@@ -51,7 +51,7 @@ namespace MovieTime.Core.Domain
             {
                 throw new ApplicationException($"Movie can not have an empty Title");
             }
-            Rate = Rate;
+            Rate = rate;
 
             UpdateAt = DateTime.Now;
         }
