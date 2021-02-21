@@ -3,7 +3,9 @@ using MovieTime.Core.Domain;
 using MovieTime.Core.Repositories;
 using MovieTime.Infrastructure.DTO;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MovieTime.Infrastructure.Services
@@ -15,7 +17,7 @@ namespace MovieTime.Infrastructure.Services
         public readonly IUserRepository _userRepository;
         public readonly ICreatorRepository _creatorRepository;
         private readonly IMapper _mapper;
-        public MovieService(IMovieRepository movieRepository, IUserRepository userRepository, IGenreRepository genreRepository,ICreatorRepository creatorRepository , IMapper mapper)
+        public MovieService(IMovieRepository movieRepository, IUserRepository userRepository, IGenreRepository genreRepository, ICreatorRepository creatorRepository, IMapper mapper)
         {
             _movieRepository = movieRepository;
             _userRepository = userRepository;
@@ -51,7 +53,7 @@ namespace MovieTime.Infrastructure.Services
         }
 
 
-        public MovieCreateDto Create(Guid ID, Guid UserID, string title, string description, int year, IEnumerable<string> creators, IEnumerable<string> genres)
+        public MovieDto Create(Guid ID, Guid UserID, string title, string description, int year, IEnumerable<string> creators, IEnumerable<string> genres)
         {
             if (UserID.ToString().Length > 0)
             {
@@ -64,8 +66,8 @@ namespace MovieTime.Infrastructure.Services
             {
                 UserID = Guid.Empty;
             }
-          
-            var movie = new Movie(ID, UserID, title, description,0, year);
+
+            var movie = new Movie(ID, UserID, title, description, 0, year);
 
             _movieRepository.Add(movie);
             foreach (var genre in genres)
@@ -83,7 +85,9 @@ namespace MovieTime.Infrastructure.Services
                 _creatorRepository.Add(creatorItem);
             }
 
-            return _mapper.Map<MovieCreateDto>(movie);
+            var createMovie = Get(movie.ID);
+
+            return _mapper.Map<MovieDto>(createMovie);
         }
 
         public void Update(Guid ID, string Title, string Description, int Year, IEnumerable<string> creators, IEnumerable<string> genres)
@@ -98,25 +102,84 @@ namespace MovieTime.Infrastructure.Services
             movie.setDescription(Description);
             movie.setYear(Year);
 
-           /* pobranie genre i creator na dpostawie movie id i aktuaclizavja, jesli jest wicecj genre lub cerate wtedy swtórz*/
+            if (genres.Count() > 0)
+            {
 
-         /*   foreach (var genre in genres)
-          *   
-            {
-                var genreItem = new Genre();
-                genreItem.setName(genre);
-                _genreRepository.Add(genreItem);
+                var getGenres = _genreRepository.GetAllByMovieId(ID).ToList();
+                var getNames = getGenres.Select(x => x.Name).ToArray();
+
+                var newElements = getNames.Except(genres.ToArray());
+
+                foreach (var genre in newElements)
+                {
+                    if (!getNames.Contains(genre))
+                    {
+                        _genreRepository.DeleteByName(genre, movie.ID);
+                    }
+                    else
+                    {
+                        var genreItem = new Genre();
+                        genreItem.setMovieID(movie.ID);
+                        genreItem.setName(genre);
+                        _genreRepository.Add(genreItem);
+                    }
+                }
+
             }
-            foreach (var creator in creators)
+
+
+
+            if (creators.Count() > 0)
             {
-                var creatorItem = new Creator();
-                creatorItem.setMovieID(movie.ID);
-                creatorItem.setName(creator);
-                _creatorRepository.Add(creatorItem);
-            }*/
+                //get data from db
+                var getCreators = _creatorRepository.GetAllByMovieId(ID).ToList();
+
+                //create lis of string
+                var getNamesCreatorsName = getCreators.Select(x => x.Name).ToList();
+
+                //create list of string from data
+                var creatorList = creators.ToList();
+
+
+
+                List<string> getNamesCreators = getNamesCreatorsName.ToList();
+                getNamesCreators.AddRange(creators.ToList());
+
+                getNamesCreators.Distinct().ToList();
+               // getNamesCreators.RemoveAll(item => creators.Contains(item));
+
+
+
+                foreach (var creator in getNamesCreators)
+                {
+                    if (getNamesCreatorsName.Contains(creator))
+                    {
+                        _creatorRepository.DeleteByName(creator, movie.ID);
+                    }
+                    else
+                    {
+                        var creatorItem = new Creator();
+                        creatorItem.setMovieID(movie.ID);
+                        creatorItem.setName(creator);
+                        _creatorRepository.Add(creatorItem);
+                    }
+                }
+            }
+            else
+            {
+                List<Creator> getAllCreators = _creatorRepository.GetAllByMovieId(ID).ToList();
+
+                foreach (Creator creator in getAllCreators)
+                {
+                    _creatorRepository.Delete(creator);
+
+                }
+            }
+
 
             _movieRepository.Update(movie);
         }
+
 
 
     }

@@ -37,6 +37,11 @@ namespace MovieTime.Infrastructure.Repositories
             _appDbContext.SaveChanges();
          
         }
+        public void DeleteByName(string name, Guid MovieID)
+        {
+            _appDbContext.Remove(_appDbContext.Genres.Single(g => g.MovieID == MovieID && g.Name == name));
+            _appDbContext.SaveChanges();
+        }
         public IEnumerable<Genre> GetAllByMovieId(Guid ID)
         {
             var genres = _appDbContext.Genres.Where(f => f.MovieID == ID);

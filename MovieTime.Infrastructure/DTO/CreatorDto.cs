@@ -9,7 +9,7 @@ namespace MovieTime.Infrastructure.DTO
 
         public Guid MovieID { get; set; }
 
-        public string Value { get; set; }
+        public string Name { get; set; }
 
 
 

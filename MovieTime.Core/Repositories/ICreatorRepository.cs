@@ -10,6 +10,7 @@ namespace MovieTime.Core.Repositories
         Creator Get(Guid ID);
         Creator Add(Creator creator);
         void Delete(Creator creator);
+        void DeleteByName(string name, Guid ID);
         IEnumerable<Creator> GetAllByMovieId(Guid ID);
       
     }

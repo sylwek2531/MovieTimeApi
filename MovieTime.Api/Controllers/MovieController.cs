@@ -64,8 +64,8 @@ namespace MovieTime.Api.Controllers
             try
             {
                 var newId = Guid.NewGuid();
-                movie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creator, movie.Genre);
-                return Created($"api/movies/{newId}", movie);
+                var createMovie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres);
+                return Created($"api/movies/{newId}", createMovie);
             }
             catch (ApplicationException ex)
             {
@@ -79,7 +79,7 @@ namespace MovieTime.Api.Controllers
         {
             try
             {
-                _movieService.Update(ID, movie.Title, movie.Description, movie.Year, movie.Creator, movie.Genre);
+                _movieService.Update(ID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres);
                 return NoContent();
             }
             catch (ApplicationException ex)

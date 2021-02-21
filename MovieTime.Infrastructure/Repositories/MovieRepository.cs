@@ -19,18 +19,15 @@ namespace MovieTime.Infrastructure.Repositories
             _appDbContext = appDbContext;
         }
         public IEnumerable<Movie> GetAll()
-        {/*
-            persons.LeftJoin(
-    phoneNumbers,
-    person => person.Id,
-    phoneNumber => phoneNumber.PersonId,
-    (person, phoneNumber) => new
-    {
-        Person = person,
-        PhoneNumber = phoneNumber?.Number
-    }
-);*/
-            IEnumerable<Movie> movies =_appDbContext.Movies.ToList();
+        {
+            List<Movie> movies =_appDbContext.Movies.ToList();
+            foreach(var movie in movies)
+            {
+              movie.Creators = _appDbContext.Creators.Where(creator => creator.MovieID == movie.ID).ToList();
+              movie.Genres = _appDbContext.Genres.Where(genre => genre.MovieID == movie.ID).ToList();
+              movie.Rateds = _appDbContext.Rateds.Where(rate => rate.MovieID == movie.ID).ToList();
+            }
+
             return movies;
         }
         public Movie Add(Movie movie)
@@ -43,6 +40,9 @@ namespace MovieTime.Infrastructure.Repositories
         public Movie Get(Guid ID)
         {
             var movie = _appDbContext.Movies.First(c => c.ID == ID);
+            movie.Creators = _appDbContext.Creators.Where(creator => creator.MovieID == movie.ID).ToList();
+            movie.Genres = _appDbContext.Genres.Where(genre => genre.MovieID == movie.ID).ToList();
+            movie.Rateds = _appDbContext.Rateds.Where(rate => rate.MovieID == movie.ID).ToList();
             return movie;
         }
 

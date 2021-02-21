@@ -33,7 +33,7 @@ namespace MovieTime.Infrastructure.Repositories
 
         public Rated Get(Guid ID)
         {
-            var rate = _appDbContext.Rateds.First(c => c.ID == ID);
+            var rate = _appDbContext.Rateds.Find(ID);
             return rate;
         }
 

@@ -33,8 +33,6 @@ namespace MovieTime.Infrastructure.Services
             }
             if (_favouriteRepository.checkIfExistByData(UserID, MovieID))
             {
-                /* var getExist = _favouriteRepository.geByData(Id_user, Id_movie);
-                 return Delete(getExist.ID);*/
                 throw new ApplicationException("Favourite movie exist");
             }
 
@@ -48,7 +46,7 @@ namespace MovieTime.Infrastructure.Services
             var favourite = _favouriteRepository.Get(ID);
             if(favourite != null)
             {
-            _favouriteRepository.Delete(favourite);
+                 _favouriteRepository.Delete(favourite);
             }
         }
         public IEnumerable<FavouriteDto> GetAllByUserId(Guid UserID)
@@ -64,7 +62,12 @@ namespace MovieTime.Infrastructure.Services
         public FavouriteDto Get(Guid ID)
         {
             var favourite = _favouriteRepository.Get(ID);
-            return _mapper.Map<FavouriteDto>(favourite);
+            if(favourite != null)
+            {
+                return _mapper.Map<FavouriteDto>(favourite);
+            }
+            throw new ApplicationException("Favourite not exist");
+
         }
 
 

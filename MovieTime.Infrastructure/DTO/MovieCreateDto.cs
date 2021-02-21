@@ -18,9 +18,9 @@ namespace MovieTime.Infrastructure.DTO
 
         //
 
-        public IEnumerable<string> Creator{ get; set; }
+        public IEnumerable<string> Creators{ get; set; }
 
-        public IEnumerable<string> Genre { get; set; }
+        public IEnumerable<string> Genres { get; set; }
 
 
     }

@@ -33,9 +33,18 @@ namespace MovieTime.Infrastructure.Repositories
 
         public void Delete(Creator creator)
         {
-            _appDbContext.Remove(creator);
+            _appDbContext.Creators.Remove(creator);
             _appDbContext.SaveChanges();
          
+        }
+        public void DeleteByName(string name, Guid MovieID)
+        {
+            var item = _appDbContext.Creators.Where(g => g.MovieID == MovieID && g.Name == name);
+            if (item != null && item.Count() > 0)
+            {
+                _appDbContext.Creators.Remove((Creator)item.First());
+                _appDbContext.SaveChanges();
+            }
         }
         public IEnumerable<Creator> GetAllByMovieId(Guid ID)
         {
