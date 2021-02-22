@@ -168,6 +168,12 @@ namespace MovieTime.Infrastructure.Services
         }
 
 
+        public IEnumerable<MovieDto> GetSearch(SearchOptionsDTO searchOption)
+        {
+            var searchOptionDomain = new SearchOptions(searchOption.Title, searchOption.Limit, searchOption.Creator, searchOption.Genre, searchOption.Popular); 
+            var movies = _movieRepository.Search(searchOptionDomain);
+            return _mapper.Map<IEnumerable<MovieDto>>(movies);
 
+        }
     }
 }

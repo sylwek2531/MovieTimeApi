@@ -12,6 +12,7 @@ namespace MovieTime.Core.Repositories
         void Update(Movie movie);
         void Delete(Movie movie);
         IEnumerable<Movie> GetAll();
+        IEnumerable<Movie> Search(SearchOptions searchOptions);
         bool CheckMovieIfExistById(Guid ID);
         void updateRateMovie(Guid MovieID, int rateValue);
     }

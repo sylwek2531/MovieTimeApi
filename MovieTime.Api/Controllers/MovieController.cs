@@ -42,6 +42,17 @@ namespace MovieTime.Api.Controllers
             }
         }
 
+        [Route("search")]
+        [HttpGet]
+        public IActionResult SearchMovies([FromQuery] SearchOptionsDTO searchOptions)
+        {
+            if (searchOptions == null)
+            {
+                return BadRequest("Invalid search options");
+            }
+            IEnumerable<MovieDto> serachMovies = _movieService.GetSearch(searchOptions);
+            return Ok(serachMovies);
+        }
         [Authorize]
         [HttpGet("id")]
         public IActionResult Get(Guid ID)
@@ -96,6 +107,7 @@ namespace MovieTime.Api.Controllers
             return NoContent();
 
         }
+        
 
       /*  public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
         {

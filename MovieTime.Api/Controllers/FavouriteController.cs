@@ -35,7 +35,7 @@ namespace MovieTime.Api.Controllers
         }
 
         [Authorize]
-        [HttpGet("id")]
+        [HttpGet("movie_id")]
         public IActionResult Get(Guid ID)
         {
             var favourite = _favouriteService.Get(ID);
