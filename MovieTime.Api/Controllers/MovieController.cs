@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using MovieTime.Infrastructure.Services;
 
 namespace MovieTime.Api.Controllers
@@ -48,7 +50,7 @@ namespace MovieTime.Api.Controllers
         {
             if (searchOptions == null)
             {
-                return BadRequest("Invalid search options");
+                return BadRequest(new { message = "Invalid search options" });
             }
             IEnumerable<MovieDto> serachMovies = _movieService.GetSearch(searchOptions);
             return Ok(serachMovies);
@@ -68,19 +70,20 @@ namespace MovieTime.Api.Controllers
             }
         }
 
-        [Authorize]
+        /*[Authorize]*/
         [HttpPost]
         public IActionResult Post([FromBody] MovieCreateDto movie)
         {
+
             try
             {
                 var newId = Guid.NewGuid();
                 var createMovie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres);
                 return Created($"api/movies/{newId}", createMovie);
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message, data = ex.getData });
             }
         }
 
@@ -93,9 +96,9 @@ namespace MovieTime.Api.Controllers
                 _movieService.Update(ID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres);
                 return NoContent();
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message, data = ex.getData });
             }
         }
 

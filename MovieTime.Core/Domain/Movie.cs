@@ -5,13 +5,18 @@ using System.Text;
 
 namespace MovieTime.Core.Domain
 {
-    public class Movie : Entity
+    public class Movie : Entity, IValidatableObject
     {
 
         public Guid UserID { get; protected set; }
+        [Required]
+        [MinLength(5)]
         public string Title { get; protected set; }
+        [Required]
         public string Description { get; protected set; }
         public int Rate { get; protected set; }
+        [Required]
+        [Range(0, 2020, ErrorMessage = "Year must be a positive number and no more than 2020")]
         public int Year { get; protected set; }
 
         public virtual User Users { get; set; }
@@ -73,6 +78,29 @@ namespace MovieTime.Core.Domain
             }
             Year = year;
             UpdateAt = DateTime.Now;
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            Validator.TryValidateProperty(this.Title,
+                new ValidationContext(this, null, null) { MemberName = "Title" },
+                results);
+            Validator.TryValidateProperty(this.Description,
+                new ValidationContext(this, null, null) { MemberName = "Description" },
+                results);
+            Validator.TryValidateProperty(this.Year,
+              new ValidationContext(this, null, null) { MemberName = "Year" },
+              results);
+
+            /*   // some other random test
+               if (this.Prop1 > this.Prop2)
+               {
+                   results.Add(new ValidationResult("Prop1 must be larger than Prop2"));
+               }*/
+
+            return results;
         }
     }
 }

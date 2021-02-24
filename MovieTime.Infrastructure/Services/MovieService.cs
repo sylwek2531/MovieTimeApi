@@ -2,14 +2,16 @@
 using MovieTime.Core.Domain;
 using MovieTime.Core.Repositories;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
+using System.Net;
 
 namespace MovieTime.Infrastructure.Services
 {
+  
     public class MovieService : IMovieService
     {
         public readonly IMovieRepository _movieRepository;
@@ -52,7 +54,24 @@ namespace MovieTime.Infrastructure.Services
             return _mapper.Map<MovieDto>(movie);
         }
 
+        public void testvalid(Movie movie)
+        {
+            bool validateAllProperties = false;
 
+            var results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateObject(
+                movie,
+                new System.ComponentModel.DataAnnotations.ValidationContext(movie, null, null),
+                results,
+                validateAllProperties);
+
+            if (!isValid)
+            {
+
+                throw new MovieTimeException(results, "New movie creation validation failed");
+            }
+        }
         public MovieDto Create(Guid ID, Guid UserID, string title, string description, int year, IEnumerable<string> creators, IEnumerable<string> genres)
         {
             if (UserID.ToString().Length > 0)
@@ -69,6 +88,7 @@ namespace MovieTime.Infrastructure.Services
 
             var movie = new Movie(ID, UserID, title, description, 0, year);
 
+            testvalid(movie);
             _movieRepository.Add(movie);
             foreach (var genre in genres)
             {
@@ -82,6 +102,24 @@ namespace MovieTime.Infrastructure.Services
                 var creatorItem = new Creator();
                 creatorItem.setMovieID(movie.ID);
                 creatorItem.setName(creator);
+
+
+                bool validateAllProperties = false;
+
+                var results = new List<ValidationResult>();
+
+                bool isValid = Validator.TryValidateObject(
+                    creatorItem,
+                    new System.ComponentModel.DataAnnotations.ValidationContext(creatorItem, null, null),
+                    results,
+                    validateAllProperties);
+
+                if (!isValid)
+                {
+
+                  throw new MovieTimeException(results, "Walidacja creatora nie przela");
+                }
+
                 _creatorRepository.Add(creatorItem);
             }
 
@@ -170,7 +208,7 @@ namespace MovieTime.Infrastructure.Services
 
         public IEnumerable<MovieDto> GetSearch(SearchOptionsDTO searchOption)
         {
-            var searchOptionDomain = new SearchOptions(searchOption.Title, searchOption.Limit, searchOption.Creator, searchOption.Genre, searchOption.Popular); 
+            var searchOptionDomain = new SearchOptions(searchOption.Title, searchOption.Limit, searchOption.Creator, searchOption.Genre, searchOption.Popular);
             var movies = _movieRepository.Search(searchOptionDomain);
             return _mapper.Map<IEnumerable<MovieDto>>(movies);
 
