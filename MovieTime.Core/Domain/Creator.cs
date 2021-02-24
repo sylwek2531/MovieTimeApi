@@ -11,7 +11,7 @@ namespace MovieTime.Core.Domain
         public Guid MovieID { get; protected set; }
 
         [Required]
-        [MinLength(90)]
+        [MinLength(2)]
         public string Name { get; protected set; }
 
         public virtual Movie Movie { get; set; }
@@ -49,18 +49,9 @@ namespace MovieTime.Core.Domain
         {
             var results = new List<ValidationResult>();
 
-            Validator.TryValidateProperty(this.MovieID,
-                new ValidationContext(this, null, null) { MemberName = "MovieID" },
-                results);
             Validator.TryValidateProperty(this.Name,
-                new ValidationContext(this, null, null) { MemberName = "Name" },
+                new ValidationContext(this, null, null) { MemberName = "Creator name" },
                 results);
-
-            /*   // some other random test
-               if (this.Prop1 > this.Prop2)
-               {
-                   results.Add(new ValidationResult("Prop1 must be larger than Prop2"));
-               }*/
 
             return results;
         }

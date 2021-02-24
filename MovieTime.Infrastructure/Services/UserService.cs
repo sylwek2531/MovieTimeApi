@@ -2,6 +2,7 @@
 using MovieTime.Core.Domain;
 using MovieTime.Core.Repositories;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,18 +24,32 @@ namespace MovieTime.Infrastructure.Services
         {
 
             if (string.IsNullOrWhiteSpace(password))
-                throw new ApplicationException("Password is required");
+            {
+                throw new MovieTimeException("Password is required");
+            }
 
             if (_userRepository.ValidateUserIfExistByLogin(login))
-                throw new ApplicationException("Login \"" + login + "\" is already taken");
+            {
+                throw new MovieTimeException("Login \"" + login + "\" is already taken");
+            }
 
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-            var user = new User(ID, name, surname, email, login, password, passwordHash, passwordSalt);
-          
-            _userRepository.Add(user);
-            return _mapper.Map<UserDto>(user);
+            try
+            {
+                var user = new User(ID, name, surname, email, login, password, passwordHash, passwordSalt);
+                var validUser = new ValidationHelper(user, "Problem with create a new user");
+                validUser.ValidationModel();
+
+                _userRepository.Add(user);
+                return _mapper.Map<UserDto>(user);
+
+            }
+            catch (MovieTimeException ex)
+            {
+                throw new MovieTimeException(ex.getData, ex.Message);
+            }
         }
 
         public void Delete(Guid ID)
@@ -47,7 +62,7 @@ namespace MovieTime.Infrastructure.Services
             }
             else
             {
-                throw new ApplicationException("User not exist");
+                throw new MovieTimeException("User not exist");
             }
 
         }
@@ -55,9 +70,9 @@ namespace MovieTime.Infrastructure.Services
         public UserDto Get(Guid ID)
         {
             var user = _userRepository.Get(ID);
-            if(user == null)
+            if (user == null)
             {
-                throw new ApplicationException("User not exist");
+                throw new MovieTimeException("User not exist");
             }
 
             return _mapper.Map<UserDto>(user);
@@ -67,19 +82,20 @@ namespace MovieTime.Infrastructure.Services
             var user = _userRepository.Get(ID);
             if (user == null)
             {
-                throw new ApplicationException("User not found");
+                throw new MovieTimeException("User not found");
             }
 
             user.setName(name);
             user.setSurname(surname);
 
-            if (!string.IsNullOrWhiteSpace(login)){
-                var existUserWithLogin =_userRepository.ValidateUser(login);
+            if (!string.IsNullOrWhiteSpace(login))
+            {
+                var existUserWithLogin = _userRepository.ValidateUser(login);
                 if (existUserWithLogin != null)
                 {
-                    if(existUserWithLogin.ID != ID)
+                    if (existUserWithLogin.ID != ID)
                     {
-                        throw new ApplicationException("Login \"" + login + "\" is already taken");
+                        throw new MovieTimeException("Login \"" + login + "\" is already taken");
                     }
                 }
                 else
@@ -99,8 +115,17 @@ namespace MovieTime.Infrastructure.Services
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
             }
-       
-            _userRepository.Update(user);
+            try
+            {
+                var validUser = new ValidationHelper(user, "Problem with update a user");
+                validUser.ValidationModel();
+                _userRepository.Update(user);
+            }
+            catch (MovieTimeException gex)
+            {
+        
+                throw new MovieTimeException(gex.getData, gex.Message);
+            }
 
         }
         public UserDto Authenticate(string login, string password)
@@ -115,7 +140,7 @@ namespace MovieTime.Infrastructure.Services
                 return null;
 
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                    return null;
+                return null;
 
             // authentication successful
             return _mapper.Map<UserDto>(user);

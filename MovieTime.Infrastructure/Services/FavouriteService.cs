@@ -2,6 +2,7 @@
 using MovieTime.Core.Domain;
 using MovieTime.Core.Repositories;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,15 +26,15 @@ namespace MovieTime.Infrastructure.Services
         {
             if (!_userRepository.ValidateUserIfExistById(UserID))
             {
-                throw new ApplicationException("User not exist");
+                throw new MovieTimeException("User not exist");
             }
             if (!_movieRepository.CheckMovieIfExistById(MovieID))
             {
-                throw new ApplicationException("Movie not exist");
+                throw new MovieTimeException("Movie not exist");
             }
             if (_favouriteRepository.checkIfExistByData(UserID, MovieID))
             {
-                throw new ApplicationException("Favourite movie exist");
+                throw new MovieTimeException("Favourite movie exist");
             }
 
             var favourite = new Favourite(ID, UserID, MovieID);
@@ -53,7 +54,7 @@ namespace MovieTime.Infrastructure.Services
         {
             if (!_userRepository.ValidateUserIfExistById(UserID))
             {
-                throw new ApplicationException("User not exist");
+                throw new MovieTimeException("User not exist");
 
             }
             var favourities = _favouriteRepository.GetAllByUserId(UserID);
@@ -66,7 +67,7 @@ namespace MovieTime.Infrastructure.Services
             {
                 return _mapper.Map<FavouriteDto>(favourite);
             }
-            throw new ApplicationException("Favourite not exist");
+            throw new MovieTimeException("Favourite not exist");
 
         }
 

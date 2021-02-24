@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using MovieTime.Infrastructure.Services;
 
 namespace MovieTime.Api.Controllers
@@ -28,7 +29,7 @@ namespace MovieTime.Api.Controllers
             {
                 IEnumerable<FavouriteDto> favourites = _favouriteService.GetAllByUserId(UserID);
                 return Ok(favourites);
-            }catch(ApplicationException ex)
+            }catch(MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
@@ -52,9 +53,9 @@ namespace MovieTime.Api.Controllers
                 var favourites = _favouriteService.Create(newId, favourite.UserID, favourite.MovieID);
                 return Created($"api/favourites/{newId}", favourites);
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message});
             }
         }
 

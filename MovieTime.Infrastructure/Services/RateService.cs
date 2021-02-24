@@ -2,6 +2,7 @@
 using MovieTime.Core.Domain;
 using MovieTime.Core.Repositories;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MovieTime.Infrastructure.Services
         public readonly IUserRepository _userRepository;
         public readonly IMovieRepository _movieRepository;
         private readonly IMapper _mapper;
-        public RateService(IRateRepository rateRepository, IUserRepository userRepository,IMovieRepository movieRepository, IMapper mapper)
+        public RateService(IRateRepository rateRepository, IUserRepository userRepository, IMovieRepository movieRepository, IMapper mapper)
         {
             _rateRepository = rateRepository;
             _userRepository = userRepository;
@@ -26,29 +27,38 @@ namespace MovieTime.Infrastructure.Services
         {
             if (!_userRepository.ValidateUserIfExistById(UserID))
             {
-                throw new ApplicationException("User not exist");
+                throw new MovieTimeException("User not exist");
             }
             if (!_movieRepository.CheckMovieIfExistById(MovieID))
             {
-                throw new ApplicationException("Movie not exist");
+                throw new MovieTimeException("Movie not exist");
             }
             if (_rateRepository.checkIfExistByData(UserID, MovieID))
             {
-                /* var getExist = _favouriteRepository.geByData(Id_user, Id_movie);
-                 return Delete(getExist.ID);*/
-                throw new ApplicationException("Rate movie exist");
+
+                throw new MovieTimeException("Rate movie exist");
             }
 
-            var rate = new Rated(ID, UserID, MovieID, Value);
-            _rateRepository.Add(rate);
-            updateRateMovie(MovieID);
-            return _mapper.Map<RateDto>(rate);
+            try
+            {
+                var rate = new Rated(ID, UserID, MovieID, Value);
+                var validRate = new ValidationHelper(rate, "Problem with create a new rate");
+                validRate.ValidationModel();
+              var values =  _rateRepository.Add(rate);
+                updateRateMovie(MovieID);
+                return _mapper.Map<RateDto>(values);
+            }
+            catch (MovieTimeException ex)
+            {
+                throw new MovieTimeException(ex.getData, ex.Message);
+
+            }
         }
-     
+
         public void Delete(Guid ID)
         {
             var rate = _rateRepository.Get(ID);
-            if(rate!= null)
+            if (rate != null)
             {
                 _rateRepository.Delete(rate);
             }
@@ -57,7 +67,7 @@ namespace MovieTime.Infrastructure.Services
         {
             if (!_userRepository.ValidateUserIfExistById(UserID))
             {
-                throw new ApplicationException("User not exist");
+                throw new MovieTimeException("User not exist");
 
             }
             var rate = _rateRepository.GetAllByUserId(UserID);
@@ -70,34 +80,55 @@ namespace MovieTime.Infrastructure.Services
         }
         public void Update(Guid ID, Guid UserID, Guid MovieID, int Value)
         {
+            if (!_userRepository.ValidateUserIfExistById(UserID))
+            {
+                throw new MovieTimeException("User not exist");
+            }
+            if (!_movieRepository.CheckMovieIfExistById(MovieID))
+            {
+                throw new MovieTimeException("Movie not exist");
+            }
+          
             var rate = _rateRepository.Get(ID);
             if (rate == null)
             {
-                throw new ApplicationException("Movie not found");
+                throw new MovieTimeException("Movie not found");
             }
+            try
+            {
 
-            rate.setValue(Value);
+                rate.setValue(Value);
+                var validRate = new ValidationHelper(rate, "Problem with update a rate");
+                validRate.ValidationModel();
+
+                _rateRepository.Update(rate);
+
+                updateRateMovie(MovieID);
 
 
-            _rateRepository.Update(rate);
+            }
+            catch (MovieTimeException ex)
+            {
+                throw new MovieTimeException(ex.getData, ex.Message);
+            }
         }
 
         private void updateRateMovie(Guid MovieID)
         {
             if (_movieRepository.CheckMovieIfExistById(MovieID))
             {
-               var allRates = _rateRepository.GetAllRateByMovieID(MovieID);
+                var allRates = _rateRepository.GetAllRateByMovieID(MovieID);
                 int avg = 0;
                 int count = 0;
                 foreach (Rated rate in allRates)
                 {
-                    
-                    if(rate.Value != 0)
+
+                    if (rate.Value != 0)
                     {
                         count += rate.Value;
                     }
                 }
-                if(count > 0)
+                if (count > 0)
                 {
                     avg = count / allRates.Count();
                 }
@@ -106,6 +137,6 @@ namespace MovieTime.Infrastructure.Services
                 _movieRepository.updateRateMovie(MovieID, rateMovie);
 
             }
-        } 
+        }
     }
 }

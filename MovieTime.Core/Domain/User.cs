@@ -8,18 +8,25 @@ namespace MovieTime.Core.Domain
     public class User : Entity, IValidatableObject
     {
         [Required]
+        [MinLength(2)]
         public string Name { get; protected set; }
 
         [Required]
+        [MinLength(2)]
         public string Surname { get; protected set; }
 
-        [Required(ErrorMessage = "The email address is required")]
+        [Required]
+        [EmailAddress]
+        [MinLength(2)]
         public string Email { get; protected set; }
 
         [Required]
+        [MinLength(2)]
         public string Login { get; protected set; }
 
         [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
         public string Password { get; protected set; }
 
         public byte[] PasswordHash { get; set; }
@@ -50,7 +57,7 @@ namespace MovieTime.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception($"User can not have an empty name");
+                throw new ApplicationException($"User can not have an empty name");
             }
             Name = name;
 
@@ -70,7 +77,7 @@ namespace MovieTime.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                throw new Exception($"User can not have an empty email");
+                throw new ApplicationException($"User can not have an empty email");
             }
             Email = email;
 
@@ -80,7 +87,7 @@ namespace MovieTime.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(login))
             {
-                throw new Exception($"User can not have an empty login");
+                throw new ApplicationException($"User can not have an empty login");
             }
             Login = login;
 
@@ -90,7 +97,7 @@ namespace MovieTime.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new Exception($"User can not have an empty password");
+                throw new ApplicationException($"User can not have an empty password");
             }
             Password = password;
 
@@ -99,7 +106,31 @@ namespace MovieTime.Core.Domain
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            var results = new List<ValidationResult>();
+
+            Validator.TryValidateProperty(this.Name,
+                new ValidationContext(this, null, null) { MemberName = "Name" },
+                results);
+            Validator.TryValidateProperty(this.Surname,
+                new ValidationContext(this, null, null) { MemberName = "Surname" },
+                results);
+            Validator.TryValidateProperty(this.Email,
+              new ValidationContext(this, null, null) { MemberName = "Email" },
+              results);
+            Validator.TryValidateProperty(this.Login,
+              new ValidationContext(this, null, null) { MemberName = "Login" },
+              results);
+            Validator.TryValidateProperty(this.Password,
+               new ValidationContext(this, null, null) { MemberName = "Password" },
+               results);
+
+            /*   // some other random test
+               if (this.Prop1 > this.Prop2)
+               {
+                   results.Add(new ValidationResult("Prop1 must be larger than Prop2"));
+               }*/
+
+            return results;
         }
     }
 }

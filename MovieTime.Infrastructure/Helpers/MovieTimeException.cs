@@ -16,5 +16,8 @@ namespace MovieTime.Infrastructure.Helpers
             _data = data;
         }
 
+        public MovieTimeException(string message) : base(message)
+        {
+        }
     }
 }

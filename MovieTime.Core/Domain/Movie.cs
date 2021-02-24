@@ -7,17 +7,24 @@ namespace MovieTime.Core.Domain
 {
     public class Movie : Entity, IValidatableObject
     {
-
         public Guid UserID { get; protected set; }
         [Required]
         [MinLength(5)]
         public string Title { get; protected set; }
         [Required]
+        [MinLength(5)]
         public string Description { get; protected set; }
         public int Rate { get; protected set; }
         [Required]
         [Range(0, 2020, ErrorMessage = "Year must be a positive number and no more than 2020")]
         public int Year { get; protected set; }
+
+        [Required]
+        [Url]
+        public string BigPhoto { get; protected set; }
+        [Required]
+        [Url]
+        public string MainPhoto { get; protected set; }
 
         public virtual User Users { get; set; }
 
@@ -30,7 +37,7 @@ namespace MovieTime.Core.Domain
         {
 
         }
-        public Movie(Guid id, Guid id_user, string title, string description, int rate, int year)
+        public Movie(Guid id, Guid id_user, string title, string description, int rate, int year, string bigPhoto, string mainPhoto)
         {
             ID = id;
             UserID= id_user;
@@ -38,6 +45,8 @@ namespace MovieTime.Core.Domain
             Description = description;
             Rate = rate;
             Year = year;
+            BigPhoto = bigPhoto;
+            MainPhoto = mainPhoto;
 
         }
         public void setTitle(string title)
@@ -77,6 +86,24 @@ namespace MovieTime.Core.Domain
                 throw new ApplicationException($"Movie can not have an empty year");
             }
             Year = year;
+            UpdateAt = DateTime.Now;
+        }
+        public void setBigPhoto(string bigPhoto)
+        {
+            if (string.IsNullOrWhiteSpace(bigPhoto.ToString()))
+            {
+                throw new ApplicationException($"Movie can not have an empty big photo");
+            }
+            BigPhoto = bigPhoto;
+            UpdateAt = DateTime.Now;
+        }
+        public void setMainPhoto(string mainPhoto)
+        {
+            if (string.IsNullOrWhiteSpace(mainPhoto.ToString()))
+            {
+                throw new ApplicationException($"Movie can not have an empty main photo");
+            }
+            MainPhoto = mainPhoto;
             UpdateAt = DateTime.Now;
         }
 

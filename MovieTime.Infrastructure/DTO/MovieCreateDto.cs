@@ -16,6 +16,9 @@ namespace MovieTime.Infrastructure.DTO
 
         public int Year { get; set; }
 
+        public string BigPhoto{ get; set; }
+        public string MainPhoto { get; set; }
+
         //
 
         public IEnumerable<string> Creators{ get; set; }

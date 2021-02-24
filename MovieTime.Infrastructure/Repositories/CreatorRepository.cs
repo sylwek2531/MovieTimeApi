@@ -46,6 +46,11 @@ namespace MovieTime.Infrastructure.Repositories
                 _appDbContext.SaveChanges();
             }
         }
+        public void DeleteByMovieID(Guid MovieID)
+        {
+            _appDbContext.Creators.RemoveRange(_appDbContext.Creators.Where(g => g.MovieID == MovieID));
+            _appDbContext.SaveChanges();
+        }
         public IEnumerable<Creator> GetAllByMovieId(Guid ID)
         {
             var creators = _appDbContext.Creators.Where(f => f.MovieID == ID);

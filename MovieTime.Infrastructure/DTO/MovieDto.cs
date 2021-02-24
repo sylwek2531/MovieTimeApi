@@ -17,7 +17,8 @@ namespace MovieTime.Infrastructure.DTO
         public int Rate { get; protected set; }
 
         public int Year { get; set; }
-
+        public string BigPhoto { get; set; }
+        public string MainPhoto { get; set; }
         //
         public ICollection<RateDto> Rateds { get; set; }
 

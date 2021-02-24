@@ -64,13 +64,13 @@ namespace MovieTime.Api.Controllers
                 var movie = _movieService.Get(ID);
                 return Ok(movie);
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
 
-        /*[Authorize]*/
+        [Authorize]
         [HttpPost]
         public IActionResult Post([FromBody] MovieCreateDto movie)
         {
@@ -78,7 +78,7 @@ namespace MovieTime.Api.Controllers
             try
             {
                 var newId = Guid.NewGuid();
-                var createMovie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres);
+                var createMovie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres, movie.BigPhoto, movie.MainPhoto);
                 return Created($"api/movies/{newId}", createMovie);
             }
             catch (MovieTimeException ex)
@@ -93,7 +93,7 @@ namespace MovieTime.Api.Controllers
         {
             try
             {
-                _movieService.Update(ID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres);
+                _movieService.Update(ID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres, movie.BigPhoto, movie.MainPhoto);
                 return NoContent();
             }
             catch (MovieTimeException ex)

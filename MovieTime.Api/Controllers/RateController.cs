@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using MovieTime.Infrastructure.Services;
 
 namespace MovieTime.Api.Controllers
@@ -28,7 +29,7 @@ namespace MovieTime.Api.Controllers
             {
                 IEnumerable<RateDto> rate = _rateService.GetAllByUserId(UserID);
                 return Ok(rate);
-            }catch(ApplicationException ex)
+            }catch(MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
@@ -52,7 +53,7 @@ namespace MovieTime.Api.Controllers
                 var rates = _rateService.Create(newId, rate.UserID, rate.MovieID, rate.Value);
                 return Created($"api/rate/{newId}", rates);
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
@@ -76,7 +77,7 @@ namespace MovieTime.Api.Controllers
                 _rateService.Update(ID, rate.UserID, rate.MovieID, rate.Value);
                 return NoContent();
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }

@@ -5,10 +5,12 @@ using System.Text;
 
 namespace MovieTime.Core.Domain
 {
-    public class Genre : Entity
+    public class Genre : Entity, IValidatableObject
     {
 
         public Guid MovieID { get; protected set; }
+        [Required]
+        [MinLength(2)]
         public string Name { get; protected set; }
         public virtual Movie Movie { get; set; }
 
@@ -40,6 +42,16 @@ namespace MovieTime.Core.Domain
             MovieID = movieID;
 
             UpdateAt = DateTime.Now;
+        }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            Validator.TryValidateProperty(this.Name,
+                new ValidationContext(this, null, null) { MemberName = "Genre name" },
+                results);
+
+            return results;
         }
 
     }

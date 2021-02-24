@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MovieTime.Infrastructure.DTO;
+using MovieTime.Infrastructure.Helpers;
 using MovieTime.Infrastructure.Services;
 
 namespace MovieTime.Api.Controllers
@@ -70,9 +71,9 @@ namespace MovieTime.Api.Controllers
                 return Created($"api/users/{newId}", user);
 
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message, data = ex.getData });
             }
         }
 
@@ -86,9 +87,9 @@ namespace MovieTime.Api.Controllers
 
                 return NoContent();
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message, data = ex.getData });
             }
         }
 
@@ -101,7 +102,7 @@ namespace MovieTime.Api.Controllers
                 _userService.Delete(ID);
                 return NoContent();
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
@@ -117,7 +118,7 @@ namespace MovieTime.Api.Controllers
                 var movie = _userService.Get(ID);
                 return Ok(movie);
             }
-            catch (ApplicationException ex)
+            catch (MovieTimeException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }

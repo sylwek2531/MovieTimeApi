@@ -10,6 +10,7 @@ namespace MovieTime.Core.Repositories
         Genre Get(Guid ID);
         Genre Add(Genre genre);
         void Delete(Genre genre);
+        void DeleteByMovieID(Guid MovieID);
         void DeleteByName(string name, Guid ID);
         IEnumerable<Genre> GetAllByMovieId(Guid ID);
     }
