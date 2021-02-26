@@ -10,8 +10,8 @@ using MovieTime.Infrastructure.Data;
 namespace MovieTime.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210224220327_updateMovie")]
-    partial class updateMovie
+    [Migration("20210226120912_inits")]
+    partial class inits
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

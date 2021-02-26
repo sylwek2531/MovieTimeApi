@@ -48,7 +48,7 @@ namespace MovieTime.Api
             services.AddScoped<IRateService, RateService>();
 
             //connecttion string db init
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MovieTime"), b => b.MigrationsAssembly("MovieTime.Api")));
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("MovieTime"), b => b.MigrationsAssembly("MovieTime.Api")));
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
