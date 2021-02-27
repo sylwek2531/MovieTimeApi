@@ -14,6 +14,7 @@ namespace MovieTime.Core.Repositories
         IEnumerable<Movie> GetAll();
         IEnumerable<Movie> Search(SearchOptions searchOptions);
         bool CheckMovieIfExistById(Guid ID);
+        IEnumerable<Movie> GetAllByUserId(Guid ID);
         void updateRateMovie(Guid MovieID, int rateValue);
     }
 }

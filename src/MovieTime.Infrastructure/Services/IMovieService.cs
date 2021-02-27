@@ -14,6 +14,8 @@ namespace MovieTime.Infrastructure.Services
         void Delete(Guid ID);
         IEnumerable<MovieDto> GetSearch(SearchOptionsDTO searchOption);
         IEnumerable<MovieDto> GetAll();
+        IEnumerable<MovieDto> GetAllByUserId(Guid UserID);
 
     }
 }
+ 

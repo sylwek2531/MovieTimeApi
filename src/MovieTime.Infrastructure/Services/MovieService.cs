@@ -53,6 +53,16 @@ namespace MovieTime.Infrastructure.Services
             var movie = _movieRepository.Get(ID);
             return _mapper.Map<MovieDto>(movie);
         }
+          public IEnumerable<MovieDto> GetAllByUserId(Guid UserID)
+        {
+            if (!_userRepository.ValidateUserIfExistById(UserID))
+            {
+                throw new MovieTimeException("User not exist");
+
+            }
+            var movies = _movieRepository.GetAllByUserId(UserID);
+            return _mapper.Map<IEnumerable<MovieDto>>(movies);
+        }
 
         public MovieDto Create(Guid ID, Guid UserID, string title, string description, int year, IEnumerable<string> creators, IEnumerable<string> genres, string bigPhoto, string mainPhoto)
         {
@@ -84,7 +94,7 @@ namespace MovieTime.Infrastructure.Services
                     var validGenre = new ValidationHelper(genreItem, "Problem with genres");
                     try
                     {
-                        validGenre.ValidationModel();
+                        //validGenre.ValidationModel();
                         _genreRepository.Add(genreItem);
 
                     }
@@ -104,7 +114,7 @@ namespace MovieTime.Infrastructure.Services
 
                     try
                     {
-                        validCreator.ValidationModel();
+                        // validCreator.ValidationModel();
                         _creatorRepository.Add(creatorItem);
 
                     }

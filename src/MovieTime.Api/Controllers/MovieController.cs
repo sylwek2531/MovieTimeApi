@@ -55,6 +55,19 @@ namespace MovieTime.Api.Controllers
             IEnumerable<MovieDto> serachMovies = _movieService.GetSearch(searchOptions);
             return Ok(serachMovies);
         }
+         [Authorize]
+        [HttpGet("user_id")]
+        public IActionResult GetAllGradesIdsByUserId(Guid UserID)
+        {
+            try
+            {
+                IEnumerable<MovieDto> movies = _movieService.GetAllByUserId(UserID);
+                return Ok(movies);
+            }catch(MovieTimeException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
         [Authorize]
         [HttpGet("id")]
         public IActionResult Get(Guid ID)
@@ -78,7 +91,9 @@ namespace MovieTime.Api.Controllers
             try
             {
                 var newId = Guid.NewGuid();
+               
                 var createMovie = _movieService.Create(newId, movie.UserID, movie.Title, movie.Description, movie.Year, movie.Creators, movie.Genres, movie.BigPhoto, movie.MainPhoto);
+               
                 return Created($"api/movies/{newId}", createMovie);
             }
             catch (MovieTimeException ex)

@@ -30,6 +30,11 @@ namespace MovieTime.Infrastructure.Repositories
 
             return movies;
         }
+          public IEnumerable<Movie> GetAllByUserId(Guid ID)
+        {
+            var movies = _appDbContext.Movies.Where(f => f.UserID == ID);
+            return movies;
+        }
         public Movie Add(Movie movie)
         {
             _appDbContext.Add(movie);
